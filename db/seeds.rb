@@ -1,8 +1,8 @@
 require 'json'
-require 'json'
+require 'open-uri'
 
 conn = ActiveRecord::Base.connection
-
+document = open("https://data.cityofnewyork.us/api/views/43nn-pn8j/rows.csv?accessType=DOWNLOAD")
 conn.execute("
   CREATE TEMP TABLE tmp (
     camis integer,
@@ -26,19 +26,26 @@ conn.execute("
   )"
 )
 
-file = Rails.root.join('lib', 'DOHMH_New_York_City_Restaurant_Inspection_Results.csv')
+# file = Rails.root.join('lib', 'DOHMH_New_York_City_Restaurant_Inspection_Results.csv')
 
-begin
-  sql_command = "
-  COPY tmp (camis, dba, boro, building, street, zipcode, phone, cuisine, inspection_date, action, violation_code, violation_description, critical_flag, score, grade, grade_date, record_date, inspection_type)
-  FROM '#{file}' CSV HEADER;"
-  conn.execute(sql_command)
-rescue => e
-  error = e.message
-  puts "CSV file is not formatted correctly. Below is the error
-   #{error}"
+File.open(document, 'r') do |file|
+  conn.raw_connection.copy_data %{copy tmp from stdin with csv header delimiter ',' quote '"'} do
+    while line = file.gets do
+      conn.raw_connection.put_copy_data line
+    end
+  end
 end
-
+# begin
+#   sql_command = "
+#   COPY tmp (camis, dba, boro, building, street, zipcode, phone, cuisine, inspection_date, action, violation_code, violation_description, critical_flag, score, grade, grade_date, record_date, inspection_type)
+#   FROM '#{file}' CSV HEADER;"
+#   conn.execute(sql_command)
+# rescue => e
+#   error = e.message
+#   puts "CSV file is not formatted correctly. Below is the error
+#    #{error}"
+# end
+#
 sql_put_temp_data_in_main = "
 INSERT INTO inspections (camis, name, building, street, boro, zipcode, cuisine, inspection_date, score )
 SELECT DISTINCT camis, dba, building, street, boro, zipcode, cuisine, inspection_date, score FROM tmp;
