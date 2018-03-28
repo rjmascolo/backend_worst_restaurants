@@ -62,8 +62,6 @@ conn.execute("
   )"
 )
 
-# file = Rails.root.join('lib', 'DOHMH_New_York_City_Restaurant_Inspection_Results.csv')
-
 File.open(document, 'r') do |file|
   conn.raw_connection.copy_data %{copy tmp from stdin with csv header delimiter ',' quote '"'} do
     while line = file.gets do
