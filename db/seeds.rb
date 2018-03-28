@@ -1,7 +1,6 @@
 require 'json'
 require 'open-uri'
 
-<<<<<<< HEAD
 Restaurant.destroy_all
 Inspection.destroy_all
 
@@ -38,8 +37,6 @@ nyc_zipcodes = [11211, 11385, 10456, 10171, 10003, 11102, 10173, 10306, 10057, 1
       }
   end
 
-=======
->>>>>>> 1aebfc1... grabs file from nydata and does upload
 conn = ActiveRecord::Base.connection
 document = open("https://data.cityofnewyork.us/api/views/43nn-pn8j/rows.csv?accessType=DOWNLOAD")
 conn.execute("
@@ -74,7 +71,6 @@ File.open(document, 'r') do |file|
     end
   end
 end
-<<<<<<< HEAD
 
 nyc_zipcodes.each{ |zip|
   data = conn.execute("SELECT * FROM tmp WHERE score IS NOT NULL AND zipcode = '#{zip}' ORDER BY score DESC LIMIT 200")
@@ -83,59 +79,6 @@ nyc_zipcodes.each{ |zip|
     Inspection.find_or_create_by(inspection_params(inspec,restaurant))
   }
 }
-=======
-# begin
-#   sql_command = "
-#   COPY tmp (camis, dba, boro, building, street, zipcode, phone, cuisine, inspection_date, action, violation_code, violation_description, critical_flag, score, grade, grade_date, record_date, inspection_type)
-#   FROM '#{file}' CSV HEADER;"
-#   conn.execute(sql_command)
-# rescue => e
-#   error = e.message
-#   puts "CSV file is not formatted correctly. Below is the error
-#    #{error}"
-# end
-#
-sql_put_temp_data_in_main = "
-INSERT INTO inspections (camis, name, building, street, boro, zipcode, cuisine, inspection_date, score )
-SELECT DISTINCT camis, dba, building, street, boro, zipcode, cuisine, inspection_date, score FROM tmp;
-"
-conn.execute(sql_put_temp_data_in_main)
-
-
-
-# restaurants_raw = RestClient.get("https://data.cityofnewyork.us/resource/9w7m-hzhe.json?$limit=100")
-# restaurants = JSON.parse(restaurants_raw)
-#
-# restaurant_data = restaurants.map{ |r|
-#   x =
-#   "('#{r["camis"]}','#{r["dba"].include? "'" ? r["dba"].tr("'", " ") : r["dba"] }', '#{r["cuisine_description"]}', '#{r["building"]} #{r["street"]}', '#{r["zipcode"]}', '#{r["boro"]}', '#{r["inspection_date"]}', '#{r["score"]}' )"
-# }.join(',')
-#
-#
-# conn.execute("INSERT INTO tmp ( restaurant_id, name, cuisine, address, zipcode, boro, inspection_date, score) VALUES #{restaurant_data}")
-#
-#
-# sql_put_temp_data_in_main = "
-# INSERT INTO restaurants (restaurant_id, name, cuisine, address, zipcode, boro)
-# SELECT DISTINCT restaurant_id, name, cuisine, address, zipcode, boro FROM tmp;
-# "
-# conn.execute(sql_put_temp_data_in_main)
-
-# Solution for a clean CSV data set
-# begin
-#   sql_command = "
-#   COPY tmp (name, sku, advertiser_name)
-#   FROM '#{file}' CSV HEADER;"
-#   conn.execute(sql_command)
-# rescue => e
-#   error = e.message
-#   puts "CSV file is not formatted correctly. Below is the error
-#    #{error}"
-# end
-#
-# conn.execute("ALTER TABLE tmp ADD advertiser_id integer;")
-#
->>>>>>> 1aebfc1... grabs file from nydata and does upload
 
 # data = conn.execute("SELECT dba, building, street, boro, zipcode, cuisine FROM tmp GROUP BY dba, building, street, boro, zipcode, cuisine")
 # byebug
