@@ -79,12 +79,3 @@ nyc_zipcodes.each{ |zip|
     Inspection.find_or_create_by(inspection_params(inspec,restaurant))
   }
 }
-
-# data = conn.execute("SELECT dba, building, street, boro, zipcode, cuisine FROM tmp GROUP BY dba, building, street, boro, zipcode, cuisine")
-# byebug
-
-# sql_put_temp_data_in_main = "
-# INSERT INTO inspections (camis, name, building, street, boro, zipcode, cuisine, inspection_date, score )
-# SELECT DISTINCT camis, dba, building, street, boro, zipcode, cuisine, inspection_date, score FROM tmp;
-# "
-# conn.execute(sql_put_temp_data_in_main)
