@@ -19,6 +19,7 @@ nyc_zipcodes = [11211, 11385, 10456, 10171, 10003, 11102, 10173, 10306, 10057, 1
         cuisine: c["cuisine"],
         zipcode: c["zipcode"],
         street: c["street"],
+        boro: c["boro"],
         building: c["building"],
         phone_number: c["phone"]
       }

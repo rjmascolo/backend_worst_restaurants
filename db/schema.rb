@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 20180323214209) do
     t.string "zipcode"
     t.string "building"
     t.string "street"
+    t.string "boro"
     t.string "phone_number"
     t.decimal "lat"
     t.decimal "long"
