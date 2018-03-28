@@ -1,7 +1,7 @@
 
 
 class InspectionsController < ApplicationController
-  
+
   def get_worst_restaurant_scores
     inspections = Inspection.worst_restaurant_in_zipcode(params["zipcode"])
     inspections.each { |inspec|
